@@ -53,6 +53,11 @@ class Enemy(Sprite):
 
         if self.rect.y >= SCREEN_HEIGHT:
             ships.remove(self)
+        for bullet in game.bullet_manager.bullets:
+
+            if self.rect.colliderect(bullet.rect):
+                ships.remove(self)
+                game.bullet_manager.bullets.remove(bullet)
 
     def shoot(self, bullet_manager, enemy_manager):
         current_time = pygame.time.get_ticks()
