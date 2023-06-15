@@ -5,10 +5,12 @@ class EnemyManager:
 		self.enemies = []
 		self.max_enemies = max_enemies #aqui
 
-	def update(self):
+	def update(self, game):
 		self.add_enemy()
 		for enemy in self.enemies:
-			enemy.update(self.enemies)
+			enemy.update(self.enemies, game)
+
+
 	def add_enemy(self):
 		if len(self.enemies) < self.max_enemies: #aqui
 			enemy = Enemy()
