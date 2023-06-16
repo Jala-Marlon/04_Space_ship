@@ -17,6 +17,10 @@ BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 
 HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
 
+COVER_BACKGROUND = pygame.image.load(os.path.join(IMG_DIR, 'Other/cover.png'))
+
+COVER_SCORE = pygame.image.load(os.path.join(IMG_DIR, 'Other/cover_score.png'))
+
 DEFAULT_TYPE = "default"
 SHIELD_TYPE = 'shield'
 
