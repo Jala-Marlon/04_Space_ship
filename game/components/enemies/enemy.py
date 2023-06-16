@@ -30,6 +30,12 @@ class Enemy(Sprite):
         self.index = 0
         self.shooting_time = random.randint(30, 50)
 
+
+        self.remaining_shots = 10
+        self.shot_delay = 400
+        self.shot_timer = pygame.time.get_ticks()
+
+
     def change_movement_x(self):
         self.index += 1
         if (self.index >= self.movement_x_for and self.movement_x == "right") or (self.rect.x >= (SCREEN_WIDTH - 40)):
@@ -53,19 +59,14 @@ class Enemy(Sprite):
 
         if self.rect.y >= SCREEN_HEIGHT:
             ships.remove(self)
-        for bullet in game.bullet_manager.bullets:
-
-            if self.rect.colliderect(bullet.rect):
-                ships.remove(self)
-                game.bullet_manager.bullets.remove(bullet)
 
     def shoot(self, bullet_manager, enemy_manager):
         current_time = pygame.time.get_ticks()
-        if self.shooting_time <= current_time:
-            for bullet in enemy_manager.enemies:
-                bullet = Bullet(self)
-                bullet_manager.add_bullet(bullet)
-                self.shooting_time += random.randint(20, 50)
+        if self.remaining_shots > 0 and current_time - self.shot_timer >= self.shot_delay:
+            bullet = Bullet(self)
+            bullet_manager.add_bullet(bullet)
+            self.remaining_shots -= 1
+            self.shot_timer = current_time
 
     def draw(self, screen):
         screen.blit(self.image, (self.rect.x, self.rect.y))

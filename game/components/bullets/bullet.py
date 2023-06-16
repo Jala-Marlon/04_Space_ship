@@ -22,13 +22,12 @@ class Bullet(Sprite):
         pass
 
     def update(self, bullets):
-        for bullet in bullets:
-            if bullet.owner == "enemy":
+            if self.owner == "enemy":
                 self.rect.y += self.SPEED
                 if self.rect.y >= SCREEN_HEIGHT:
                     bullets.remove(self)
 
-            if bullet.owner == "player":
+            if self.owner == "player":
                 self.rect.y -= self.SPEED
                 if self.rect.y < 0:
                     bullets.remove(self)

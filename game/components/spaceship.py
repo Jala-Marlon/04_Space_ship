@@ -16,6 +16,8 @@ class Spaceship(Sprite):
         self.rect.x = self.X_POS
         self.rect.y = self.Y_POS
         self.type = "player"
+        self.shoot_delay = 200
+        self.last_shoot_time = pygame.time.get_ticks()
 
     def move_left(self):
         if self.rect.left > 0:
@@ -46,10 +48,13 @@ class Spaceship(Sprite):
             self.move_up()
         if user_input[pygame.K_DOWN]:
             self.move_down()
-        if user_input[pygame.K_SPACE]:
+        current_time = pygame.time.get_ticks()
+        if user_input[pygame.K_SPACE] and current_time - self.last_shoot_time > self.shoot_delay:
             self.shoot(game.bullet_manager)
+            self.last_shoot_time = current_time
 
     def shoot(self, bullet_manager):
+        
         bullet = Bullet(self)
         bullet_manager.add_bullet(bullet)
 
