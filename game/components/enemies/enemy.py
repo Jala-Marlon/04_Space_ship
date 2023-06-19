@@ -2,7 +2,7 @@ import pygame
 import random
 
 from pygame.sprite import Sprite
-from game.utils.constants import ENEMY_1, ENEMY_2, SCREEN_WIDTH, SCREEN_HEIGHT
+from game.utils.constants import ENEMY_1, ENEMY_2, SCREEN_WIDTH, SCREEN_HEIGHT, SHOOT_SOUND_ENEMY
 from game.components.bullets.bullet import Bullet
 
 
@@ -10,7 +10,7 @@ class Enemy(Sprite):
     X_POS_LIST = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550]
     Y_POS = 20
     SPEED_X = 5
-    SPEED_Y = 1
+    SPEED_Y = 20
     MOV_X = {0: "left", 1: "right"}
     RAND_IMAGE = [ENEMY_1, ENEMY_2]  # aqui
 
@@ -28,12 +28,8 @@ class Enemy(Sprite):
         self.movement_x = self.MOV_X[random.randint(0, 1)]
         self.movement_x_for = random.randint(30, 200)
         self.index = 0
-        self.shooting_time = random.randint(30, 50)
-
-
-        self.remaining_shots = 10
-        self.shot_delay = 400
-        self.shot_timer = pygame.time.get_ticks()
+        self.shooting_time = pygame.time.get_ticks()+500
+        self.shoot_num = 0
 
 
     def change_movement_x(self):
@@ -48,7 +44,7 @@ class Enemy(Sprite):
 
     def update(self, ships, game):
         self.rect.y += self.speed_y
-        self.shoot(game.bullet_manager, game.enemy_manager)
+        self.shoot(game.bullet_manager)
 
         if self.movement_x == "left":
             self.rect.x -= self.speed_x
@@ -60,13 +56,16 @@ class Enemy(Sprite):
         if self.rect.y >= SCREEN_HEIGHT:
             ships.remove(self)
 
-    def shoot(self, bullet_manager, enemy_manager):
+    def shoot(self, bullet_manager):
         current_time = pygame.time.get_ticks()
-        if self.remaining_shots > 0 and current_time - self.shot_timer >= self.shot_delay:
+        round_time = round((self.shooting_time - pygame.time.get_ticks())/1000)
+        if round_time <= 0:
             bullet = Bullet(self)
             bullet_manager.add_bullet(bullet)
-            self.remaining_shots -= 1
-            self.shot_timer = current_time
+            self.shoot_num += 1
+            self.shooting_time = pygame.time.get_ticks()+2000
+            sound = pygame.mixer.Sound(SHOOT_SOUND_ENEMY)
+            pygame.mixer.Sound.play(sound)
 
     def draw(self, screen):
         screen.blit(self.image, (self.rect.x, self.rect.y))

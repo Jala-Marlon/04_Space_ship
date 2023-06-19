@@ -1,4 +1,5 @@
 import pygame
+from game.utils.constants import SHIELD_TYPE, SKULL_TYPE, LOSE_SOUND, ENEMY_DEATH_SOUND
 
 
 class BulletManager:
@@ -13,9 +14,12 @@ class BulletManager:
 
             if bullet.rect.colliderect(game.player.rect) and bullet.owner == "enemy":
                 self.enemy_bullets.remove(bullet)
-                game.playing = False
-                pygame.time.delay(1000)
-                game.death_count += 1
+                if game.player.power_up_type != SHIELD_TYPE and game.player.power_up_type != SKULL_TYPE:
+                    sound = pygame.mixer.Sound(LOSE_SOUND)
+                    pygame.mixer.Sound.play(sound)
+                    game.death_count.update()
+                    pygame.time.delay(2000)
+                    game.playing = False
                 break
 
         for bullet in self.bullets:
@@ -23,8 +27,10 @@ class BulletManager:
             for enemy in game.enemy_manager.enemies:
                 if bullet.rect.colliderect(enemy.rect) and bullet.owner == "player":
                     game.enemy_manager.enemies.remove(enemy)
+                    sound = pygame.mixer.Sound(ENEMY_DEATH_SOUND)
+                    pygame.mixer.Sound.play(sound)
                     self.bullets.remove(bullet)
-                    game.update_score()
+                    game.score.update()
                     break
 
     def draw(self, screen):
@@ -34,8 +40,11 @@ class BulletManager:
             bullet.draw(screen)
 
     def add_bullet(self, bullet):
-        if bullet.owner == "enemy" and len(self.enemy_bullets) < self.max_enemy:
-            self.enemy_bullets.append(bullet)
+        if bullet.owner == "enemy":
+                self.enemy_bullets.append(bullet)
 
         elif bullet.owner == "player":
             self.bullets.append(bullet)
+
+    def reset(self):
+        self.enemy_bullets = []
